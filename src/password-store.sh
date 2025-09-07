@@ -252,7 +252,7 @@ cmd_usage() {
 	        during entry. Or, optionally, the entry may be multiline. Prompt before
 	        overwriting existing password unless forced.
 	    $PROGRAM edit pass-name
-	        Insert a new password or edit an existing password using ${EDITOR:-vi}.
+	        Insert a new password or edit an existing password using ${PASSAGE_EDITOR:-vi}.
 	    $PROGRAM generate [--no-symbols,-n] [--clip,-c] [--in-place,-i | --force,-f] pass-name [pass-length]
 	        Generate a new password of pass-length (or $GENERATED_LENGTH if unspecified) with optionally no symbols.
 	        Optionally put it on the clipboard and clear board after $CLIP_TIME seconds.
@@ -431,13 +431,13 @@ cmd_edit() {
 		$AGE -d -o "$tmp_file" -i "$IDENTITIES_FILE" "$passfile" || exit 1
 		action="Edit"
 	fi
-	${EDITOR:-vi} "$tmp_file"
+	${PASSAGE_EDITOR:-vi} "$tmp_file"
 	[[ -f $tmp_file ]] || die "New password not saved."
 	$AGE -d -o - -i "$IDENTITIES_FILE" "$passfile" 2>/dev/null | diff - "$tmp_file" &>/dev/null && die "Password unchanged."
 	while ! $AGE -e "${AGE_RECIPIENT_ARGS[@]}" -o "$passfile" "$tmp_file"; do
 		yesno "Age encryption failed. Would you like to try again?"
 	done
-	git_add_file "$passfile" "$action password for $path using ${EDITOR:-vi}."
+	git_add_file "$passfile" "$action password for $path using ${PASSAGE_EDITOR:-vi}."
 }
 
 cmd_generate() {
